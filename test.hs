@@ -1,8 +1,8 @@
 import BFMonad
 import BFParser
 
-import Control.Monad.State
--- import Text.ParserCombinators.Parsec
+import qualified Control.Monad.State as S
+import Text.ParserCombinators.Parsec
 -- test s = run p
 --   where
 --     Right p = parseTest program s
@@ -13,4 +13,12 @@ import Control.Monad.State
 --   where
 --     Right p = parseTest program s
 
-run p = runState (interpretProgram p) ([], repeat 0)
+
+
+runFile f = do
+  prog <- parseFromFile program f
+  case prog of
+    Left err -> error $ show err
+    Right prog -> run prog
+
+run p = S.runStateT (interpretProgram p) ([], replicate 10 0)

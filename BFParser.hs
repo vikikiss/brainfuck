@@ -32,7 +32,7 @@ stmt = choice [pointerInc, pointerDec, inc, dec, loop, print, input]
       return Dec
       
     loop = do
-      body <- between (char '[') (char ']') (many stmt)
+      body <- between (keyword '[') (keyword ']') (many stmt)
       return $ Loop body
       
     print = do
