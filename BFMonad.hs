@@ -7,8 +7,10 @@ import Data.Word
 import BFLang
 import BFParser
 
-newtype Memory a = Memory { unMemory :: StateT ([Word8], [Word8]) IO a }
+-- type Memory a = Memory { unMemory :: StateT ([Word8], [Word8]) IO a }
+type Memory a = StateT ([Word8], [Word8]) IO a
 
+interpretProgram :: BFProgram -> Memory ()
 interpretProgram pr = mapM_ interpretStmt pr
   where
     -- ([], [1,2,3,4])
@@ -32,9 +34,9 @@ interpretProgram pr = mapM_ interpretStmt pr
 
     interpretStmt loop@(Loop body) = do
       (front, e:end) <- get
-      unless (e == 0) $ interpretProgram body
-      interpretStmt loop
+      unless (e == 0) $ do interpretProgram body
+                           interpretStmt loop
     
     interpretStmt Print = do
       (fs, e:es) <- get
-      lift $ print e
+      lift $ putChar $ chr $ fromIntegral e
